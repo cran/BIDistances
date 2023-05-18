@@ -1,0 +1,110 @@
+---
+title: "BIDistances"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BIDistances}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(BIDistances)
+```
+
+# Introduction to Bioinformatic Distances
+
+This packages contains various functions for distances-measures useful for bioinformatic data.
+
+# Installation
+
+Installation using GitHub
+
+#```{r}
+#library(remotes)
+#install_github("Mthrun/BIDistances")
+#```
+
+# Examples
+
+## CosinusDistance
+
+The cosine distance is a distance-measure based on the cosine similarity. Let $A$ be the data matrix and $A_i$, $A_j$ some row vectors of $A$. The cosine similarity is then defined as $\begin{equation} \text{s(i,j)} = \cos(\theta) = \frac{\mathbf{A_i} \cdot \mathbf{A_j}}{|\mathbf{A_i}| |\mathbf{A_j}|} \end{equation}$, and the cosine distance as $d(i,j)=\max{s}-s(i,j)$.
+
+```{r}
+data(Hepta) 
+distMatrix = CosinusDistance(Hepta$Data)
+
+```
+
+## Dist2All
+
+The Dist2All function calculates the distances of a given point $x$, to all other points (rows) of a given data matrix $A$. For the calculation of the distances, various distance-measures can be chosen, for e.g. Euclidean, Manhattan (City Block), Mahalanobis, Bhjattacharyya, for a complete list see [parallelDist](https://CRAN.R-project.org/package=parallelDist). The distance-measure can be specified with the method argument. The function returns an ordered vector of the distances from point $x$ to all points in $A$ in ascending order, as well as the indices of k-nearest-neighbors for the chosen distance measure.
+
+```{r}
+data(Hepta)
+V = Dist2All(Hepta$Data[1,],Hepta$Data, method = "euclidean", knn=3)
+# Vector of distances from Hepta$Data[1,] to all other rows in Hepta$Data
+print(V$distToAll)
+# Vector of the indices of the k-nearest-neighbors, according to the euclidean distance
+print(V$KNN)
+```
+
+## DistanceMatrix
+
+For a given $[1:n, 1:d]$ data matrix $A$, with $n$ cases and $d$ variables, the function calculates the symmetric $[1:n, 1:n]$ distance matrix, given a chosen distance-measure. The method argument specifies the distance-measure (euclidean by default).
+
+```{r}
+data(Hepta)
+Dmatrix = DistanceMatrix(Hepta$Data, method='euclidean')
+```
+
+Options for method include :
+
+'euclidean', 'sqEuclidean', 'binary', 'cityblock', 'maximum', 'canberra', 'cosine', 'chebychev', 'jaccard', 'mahalanobis', 'minkowski' ,'manhattan' , 'braycur' ,'cosine'.
+
+For the method 'minkowski', the parameter dim, can be used to specify the value of p in $\left( \sum_{i=1}^{n} |A_{j i} - A_{l i}|^p \right)^{1/p}$
+
+```{r}
+Dmatrix = DistanceMatrix(Hepta$Data, method='minkowski', dim=3)
+```
+
+## Fractional Distances
+
+The fractional distance function uses the formula of the Minkowski-metric to calculate the distances and allows the usage of fractional values $p \in [0,1]$, which can be useful for high-dimensional data [Aggrawal et al., 2001].
+
+```{r}
+data(Hepta)
+distMatrix = FractionalDistance(Hepta$Data, p = 1/2)
+```
+
+## Tfidf-distance
+
+The term frequency-inverse document frequency (Tf-idf) is a statistical measure of relevance of a term $t$ to a document $d$ in a collection of documents $D$. The Tfidf-distance for two documents $d_i$, $d_j \in D$ is then the absolute difference between the Tfidf-values.
+
+An exemplary usage for bioinformatic data is the calculation of distances between genes using the Tfidf-distance, based on GO-Terms (Gene-Ontology-terms). For this a matrix $A$ of $n$ genes as rows and $m$ GO-Terms as columns is used, where genes can be interpreted as documents and GO-terms as terms [Thrun, 2022].
+
+```{r}
+data(Hearingloss_N109)
+V = Tfidf_dist(Hearingloss_N109$FeatureMatrix_Gene2Term, tf_fun = mean)
+# Get distances
+dist = V$dist
+# Get weights
+TfidfWeights = V$TfidfWeights
+```
+
+For the calculation of the (augmented) term-frequency, per default the mean of the non-zero entries is used, but can be specified with the argument tf_fun.
+
+# References
+
+[Thrun, 2021] Thrun, M. C.: The Exploitation of Distance Distributions for Clustering, International Journal of Computational Intelligence and Applications, Vol. 20(3), pp. 2150016, DOI: 10.1142/S1469026821500164, 2021.
+
+[Thrun, 2022] Thrun, M. C.: Knowledge-based Indentification of Homogenous Structures in Genes, 10th World Conference on Information Systems and Technologies (WorldCist'22), in: Rocha, A., Adeli, H., Dzemyda, G., Moreira, F. (eds) Information Systems and Technologies, Lecture Notes in Networks and Systems, Vol 468.,pp. 81-90, DOI: 10.1007/978-3-031-04826-5_9, Budva, Montenegro, 12-14 April, 2022.
+
+[Aggrawal et al., 2001] Aggrawal, C. C., Hinneburg, A., Keim, D. (2001), On the Suprising Behavior of Distance Metrics in High Dimensional Space.

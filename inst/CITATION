@@ -1,0 +1,21 @@
+citHeader("To cite BIDistances R package in publications, please use:")
+
+bibentry(
+  bibtype  = "Article",
+  title    = "The Exploitation of Distance Distributions for Clustering",
+  author   = c(person(given="Michael Christoph", family="Thrun")),
+  journal  = "International Journal of Computational Intelligence and Applications",
+  volume   = "20(3)",
+  pages = "2150016",
+  year     = "2021",
+  doi      = "10.1142/S1469026821500164",
+  textVersion = paste(
+  "Thrun, M. C.:",
+  "The Exploitation of Distance Distributions for Clustering,",
+  "International Journal of Computational Intelligence and Applications,",
+  "Vol. 20(3),",
+  "pp. 2150016,",
+  "DOI: 10.1142/S1469026821500164,",
+  "2021."
+  )
+)

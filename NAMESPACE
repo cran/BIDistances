@@ -1,0 +1,7 @@
+exportPattern("^[[:alpha:]]+")
+
+importFrom("parallelDist", "parallelDist", "parDist")
+importFrom("parallel", "detectCores", "makeCluster", "parSapply")
+importFrom("stats", "as.dist", "cor", "dist")
+
+
