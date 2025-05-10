@@ -1,29 +1,18 @@
 \name{CosinusDistance}
 \alias{CosinusDistance}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Cosine Distance}
-\description{
-Calculates the cosine distance
-}
-\usage{
-CosinusDistance(Data)
-}
-%- maybe also 'usage' for other objects documented here.
+\title{Cosine Distance}
+\description{Calculates the cosine distance}
+\usage{CosinusDistance(Data)}
 \arguments{
-  \item{Data}{
+\item{Data}{
 [1:n,1:d] matrix with n cases, d variables
 }
 }
 \details{
- \url{https://en.wikipedia.org/wiki/Cosine_similarity}
+\url{https://en.wikipedia.org/wiki/Cosine_similarity}
 }
 \value{
-  \item{Distance}{[1:n,1:n] symmetric matrix, containing the distanes of the cases (rows) for the given data}
-
-}
-\references{
-\url{http://stats.stackexchange.com/questions/31565/is-there-an-r-function-that-will-compute-the-cosine-dissimilarity-matrix}
+\item{Distance}{[1:n,1:n] symmetric matrix, containing the distanes of the cases (rows) for the given data}
 }
 \author{
 Michael Thrun

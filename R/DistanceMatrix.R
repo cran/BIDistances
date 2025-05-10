@@ -1,4 +1,4 @@
-DistanceMatrix = function(X,method='euclidean',dim=2,outputisvector=FALSE,GPU=FALSE){
+DistanceMatrix = function(X,method='euclidean',dim=2,outputisvector=FALSE){
   # Dmatrix = DistanceMatrix(X,distance)
   # computes the distance between objects in the data matrix, X,
   # using the method specified by distance, which can be any of the following character strings
@@ -9,8 +9,8 @@ DistanceMatrix = function(X,method='euclidean',dim=2,outputisvector=FALSE,GPU=FA
   #
   # Optional
   # method          method specified by distance string:
-  #                 'euclidean','sqEuclidean','mahalanobis','pearson','cityblock=manhatten','cosine','chebychev'=max(abs(x-y)),'jaccard','minkowski','manhattan','binary', 'canberra'=sum abs(x-y)/sum(abs(x)-abs(y)), 'maximum', 'braycur'=sum abs(x -y)/abs(x+y), "cosine"
-  # dim             if method="minkowski", choose scalar, The ppth root of the sum of the ppth powers of the differences of the components.
+  #                 'euclidean','sqEuclidean','mahalanobis','pearson','spearman','kendall','cityblock=manhatten','cosine','chebychev'=max(abs(x-y)),'jaccard','minkowski','manhattan','binary', 'canberra'=sum abs(x-y)/sum(abs(x)-abs(y)), 'maximum', 'braycur'=sum abs(x -y)/abs(x+y), "cosine"
+  # dim             if method="minkowski", or wasserstein, choose scalar, The ppth root of the sum of the ppth powers of the differences of the components. For wasserstein default is 1
   # outputisvector  Falls Vector der Distanzen benoetigt wird, wird Paket pracma fuer squareform geladen
   #
   # OUTPUT
@@ -36,20 +36,17 @@ DistanceMatrix = function(X,method='euclidean',dim=2,outputisvector=FALSE,GPU=FA
     #warning('Pruefe Anzahl von Spalten und Zeilen der Input-Matrix!')
     #warning('Vektorraum unterbestimmt: Definition eines gueltigen Distanzmasses zweifelhaft, weil jede Variable, also jeder Vektor, zu Wenig Werte also Zeilen besitzt!')
   }
+  method=tolower(method)
+  #the same
+  if(method=="cityblock") method="manhatten"
+
   switch(method,
          euclidean = {
-           if(isTRUE(GPU))
-              Dmatrix = EuclideanDistances_GPU(X,OutputType = "mat")
-           else
              Dmatrix = as.matrix(parallelDist::parallelDist(X))
            },
-         sqEuclidean = {
-           if(isTRUE(GPU))
-             Dmatrix = EuclideanDistances_GPU(X,OutputType = "mat")
-           else
+         sqeuclidean = {
              Dmatrix = as.matrix(parallelDist::parallelDist(X))
-
-           Dmatrix = (Dmatrix) ^ 2
+            Dmatrix = (Dmatrix) ^ 2
            },
          binary = {
            Dmatrix = as.matrix(dist(X, method = "binary"))
@@ -64,10 +61,29 @@ DistanceMatrix = function(X,method='euclidean',dim=2,outputisvector=FALSE,GPU=FA
          # cityblock = {
          # Dmatrix = as.matrix(dist(X, method = "manhattan"))
    # },
-    pearson = {
-      #Dmatrix = as.matrix(arules::dissimilarity(X, method = "pearson"))
-      Dmatrix=1-cor(t(X),method = 'pearson')
+   wasserstein = {
+     #Dmatrix = as.matrix(arules::dissimilarity(X, method = "pearson"))
+     Dmatrix=WassersteinDist(X,p=dim,InverseWeighting = FALSE)
+   },
+   pearsond = {
+     #Dmatrix = as.matrix(arules::dissimilarity(X, method = "pearson"))
+     Dmatrix=1-cor(t(X),method = 'pearson')
+   },
+   spearmand = {
+     Dmatrix=1-cor(t(X),method = 'spearman')
+   },
+   kendalld = {
+     Dmatrix=1-cor(t(X),method = 'kendall')
+   },
+    pearsonm = {
+      Dmatrix=TransformSimilarity2MetricDistance((cor(t(X),method = 'pearson')+1)/2)#1-cor(t(X),method = 'pearson')
     },
+   spearmanm = {
+     Dmatrix=TransformSimilarity2MetricDistance((cor(t(X),method = 'spearman')+1)/2)#1-cor(t(X),method = 'spearman')
+   },
+   kendallm = {
+     Dmatrix=TransformSimilarity2MetricDistance((cor(t(X),method = 'kendall')+1)/2)##1-cor(t(X),method = 'kendall')
+   },
    # maximum = {
      # Dmatrix = as.matrix(dist(X, method = "maximum"))
    # },
@@ -77,7 +93,7 @@ DistanceMatrix = function(X,method='euclidean',dim=2,outputisvector=FALSE,GPU=FA
    fractional = {
     Dmatrix = FractionalDistance(X, dim)
    },
-   fagerDissimilarity = {
+   fagerdissimilarity = {
      if(!requireNamespace("parallelDist")){
        DD = as.matrix(parallelDist::parDist(X, method = 'fager'))
        Dmatrix=-DD

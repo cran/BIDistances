@@ -32,10 +32,7 @@ List with
 \item{TfidfWeights}{[1:n] Numeric vector containing the term frequence inverse document frequency weights used for the distance, given as the Term frequency*Inverse document frequency}
 }
 
-\author{
-Michael Thrun
-}
-
+\author{Michael Thrun}
 \examples{
 data(Hearingloss_N109)
 V = Tfidf_dist(Hearingloss_N109$FeatureMatrix_Gene2Term)

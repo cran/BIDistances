@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +60,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -340,7 +340,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BIDistances)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(BIDistances)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; Warning: vorhergehender Import &#39;Rcpp::LdFlags&#39; durch &#39;RcppParallel::LdFlags&#39;</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; während des Ladens von &#39;DataVisualizations&#39; ersetzt</span></span></code></pre></div>
 <div id="introduction-to-bioinformatic-distances" class="section level1">
 <h1>Introduction to Bioinformatic Distances</h1>
 <p>This packages contains various functions for distances-measures
@@ -362,8 +364,8 @@ as <span class="math inline">\(\begin{equation} \text{s(i,j)} =
 \cos(\theta) = \frac{\mathbf{A_i} \cdot \mathbf{A_j}}{|\mathbf{A_i}|
 |\mathbf{A_j}|} \end{equation}\)</span>, and the cosine distance as
 <span class="math inline">\(d(i,j)=\max{s}-s(i,j)\)</span>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Hepta) </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>distMatrix <span class="ot">=</span> <span class="fu">CosinusDistance</span>(Hepta<span class="sc">$</span>Data)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">data</span>(Hepta) </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>distMatrix <span class="ot">=</span> <span class="fu">CosinusDistance</span>(Hepta<span class="sc">$</span>Data)</span></code></pre></div>
 </div>
 <div id="dist2all" class="section level2">
 <h2>Dist2All</h2>
@@ -375,19 +377,49 @@ a complete list see <a href="https://CRAN.R-project.org/package=parallelDist">pa
 The distance-measure can be specified with the method argument. The
 function returns an ordered vector of the distances from point <span class="math inline">\(x\)</span> to all points in <span class="math inline">\(A\)</span> in ascending order, as well as the
 indices of k-nearest-neighbors for the chosen distance measure.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Hepta)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>V <span class="ot">=</span> <span class="fu">Dist2All</span>(Hepta<span class="sc">$</span>Data[<span class="dv">1</span>,],Hepta<span class="sc">$</span>Data, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>, <span class="at">knn=</span><span class="dv">3</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector of distances from Hepta$Data[1,] to all other rows in Hepta$Data</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(V<span class="sc">$</span>distToAll)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [38] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [75] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [112] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [149] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [186] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector of the indices of the k-nearest-neighbors, according to the euclidean distance</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(V<span class="sc">$</span>KNN)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 3</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">data</span>(Hepta)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>V <span class="ot">=</span> <span class="fu">Dist2All</span>(Hepta<span class="sc">$</span>Data[<span class="dv">1</span>,],Hepta<span class="sc">$</span>Data, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>, <span class="at">knn=</span><span class="dv">3</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># Vector of distances from Hepta$Data[1,] to all other rows in Hepta$Data</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">print</span>(V<span class="sc">$</span>distToAll)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt;   [1] 0.00000000 0.08058895 0.04781043 0.09214454 0.03886835 0.09699465</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt;   [7] 0.09783282 0.06061589 0.10267484 0.08356635 0.12395455 0.13170909</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;  [13] 0.09367107 0.07311107 0.10489254 0.07201004 0.16944962 0.08932404</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt;  [19] 0.13545775 0.03665085 0.12492320 0.13485587 0.05292353 0.03097211</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;  [25] 0.14614814 0.08677934 0.02394002 0.11479889 0.03230518 0.14903284</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;  [31] 0.13893677 0.14948497 2.52446917 3.01913398 3.21579110 3.17836461</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt;  [37] 3.15769630 2.57796199 3.31600855 3.42089925 3.83891632 3.58352663</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;  [43] 3.82807942 3.74241501 3.66695458 2.56495911 3.48798635 2.51574735</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;  [49] 2.47210300 3.08088830 3.29044933 2.51797162 2.77927187 3.11074797</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;  [55] 3.09722767 3.55496535 3.33477595 3.09117752 3.14815058 2.98838821</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt;  [61] 2.90743022 2.93734164 2.66675926 2.64259662 3.36701734 3.90809765</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt;  [67] 3.30677234 2.66204951 2.20011186 3.05133415 3.51307757 2.65792595</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt;  [73] 3.32292220 2.87368651 2.72029774 2.61406504 2.92254677 2.83595565</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt;  [79] 3.55531532 2.53112234 2.76796248 2.90106297 3.11617310 3.60091602</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt;  [85] 3.55476025 2.31093773 2.62329978 3.22935873 2.56992529 3.40588864</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt;  [91] 3.90022679 2.81386462 3.02034146 3.05283900 2.13176098 3.07322426</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt;  [97] 3.49643390 3.33818899 3.28321841 2.64631876 3.34413644 3.69818991</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; [103] 2.86346004 3.65485742 3.78012860 3.58415974 2.65018304 3.56255550</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; [109] 3.65163561 2.91422029 3.07258132 2.45181926 2.29991462 3.20917355</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; [115] 3.70924494 2.59280107 2.97424022 2.83887470 3.53219603 2.70771842</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; [121] 3.03205030 3.31160172 2.47996181 3.05245948 3.12721819 3.63906971</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; [127] 3.07121966 2.40720597 2.77981952 3.75378880 3.93878434 2.63787864</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; [133] 3.57013739 3.00944011 3.00081140 3.10025752 2.44570366 3.09900684</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="co">#&gt; [139] 2.94566780 3.22610410 3.77257806 2.95948219 3.04835200 3.29707317</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="co">#&gt; [145] 2.38829944 3.36077136 3.68833648 2.18316289 2.99890839 2.81540383</span></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#&gt; [151] 2.42404613 3.81733227 2.92926568 3.45549966 3.21561093 3.37903200</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt; [157] 2.41146632 3.09742210 2.93177839 3.02379783 3.01282943 2.31164299</span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co">#&gt; [163] 2.92613725 3.30081802 2.89988712 2.83634572 2.95293088 3.38450777</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="co">#&gt; [169] 2.22953148 2.83342086 3.52553473 2.32071642 2.65455358 2.52694921</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="co">#&gt; [175] 2.78506782 3.55896170 2.21862698 3.10491516 2.20840668 2.95602706</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="co">#&gt; [181] 3.02296244 3.87704358 3.02381731 3.93379495 3.70924221 3.03949680</span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a><span class="co">#&gt; [187] 3.13826953 3.00121181 2.97098494 2.90194795 3.67516270 3.42685363</span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="co">#&gt; [193] 3.65196565 2.40343230 3.17742347 2.80353846 3.04065098 2.98600351</span></span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="co">#&gt; [199] 3.22565744 3.16701313 2.52899115 3.72693787 2.57746647 3.77579621</span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a><span class="co">#&gt; [205] 2.94798545 3.06495823 2.52541787 2.76796966 3.30391078 2.95077124</span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a><span class="co">#&gt; [211] 3.67311616 2.69897901</span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="co"># Vector of the indices of the k-nearest-neighbors, according to the euclidean distance</span></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a><span class="fu">print</span>(V<span class="sc">$</span>KNN)</span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a><span class="co">#&gt; [1]  1 27 24</span></span></code></pre></div>
 </div>
 <div id="distancematrix" class="section level2">
 <h2>DistanceMatrix</h2>
@@ -396,8 +428,8 @@ matrix <span class="math inline">\(A\)</span>, with <span class="math inline">\(
 symmetric <span class="math inline">\([1:n, 1:n]\)</span> distance
 matrix, given a chosen distance-measure. The method argument specifies
 the distance-measure (euclidean by default).</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Hepta)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Dmatrix <span class="ot">=</span> <span class="fu">DistanceMatrix</span>(Hepta<span class="sc">$</span>Data, <span class="at">method=</span><span class="st">&#39;euclidean&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">data</span>(Hepta)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>Dmatrix <span class="ot">=</span> <span class="fu">DistanceMatrix</span>(Hepta<span class="sc">$</span>Data, <span class="at">method=</span><span class="st">&#39;euclidean&#39;</span>)</span></code></pre></div>
 <p>Options for method include :</p>
 <p>‘euclidean’, ‘sqEuclidean’, ‘binary’, ‘cityblock’, ‘maximum’,
 ‘canberra’, ‘cosine’, ‘chebychev’, ‘jaccard’, ‘mahalanobis’, ‘minkowski’
@@ -405,7 +437,7 @@ the distance-measure (euclidean by default).</p>
 <p>For the method ‘minkowski’, the parameter dim, can be used to specify
 the value of p in <span class="math inline">\(\left( \sum_{i=1}^{n}
 |A_{j i} - A_{l i}|^p \right)^{1/p}\)</span></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Dmatrix <span class="ot">=</span> <span class="fu">DistanceMatrix</span>(Hepta<span class="sc">$</span>Data, <span class="at">method=</span><span class="st">&#39;minkowski&#39;</span>, <span class="at">dim=</span><span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>Dmatrix <span class="ot">=</span> <span class="fu">DistanceMatrix</span>(Hepta<span class="sc">$</span>Data, <span class="at">method=</span><span class="st">&#39;minkowski&#39;</span>, <span class="at">dim=</span><span class="dv">3</span>)</span></code></pre></div>
 </div>
 <div id="fractional-distances" class="section level2">
 <h2>Fractional Distances</h2>
@@ -414,8 +446,8 @@ Minkowski-metric to calculate the distances and allows the usage of
 fractional values <span class="math inline">\(p \in [0,1]\)</span>,
 which can be useful for high-dimensional data [Aggrawal et al.,
 2001].</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Hepta)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>distMatrix <span class="ot">=</span> <span class="fu">FractionalDistance</span>(Hepta<span class="sc">$</span>Data, <span class="at">p =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">data</span>(Hepta)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>distMatrix <span class="ot">=</span> <span class="fu">FractionalDistance</span>(Hepta<span class="sc">$</span>Data, <span class="at">p =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span></code></pre></div>
 </div>
 <div id="tfidf-distance" class="section level2">
 <h2>Tfidf-distance</h2>
@@ -428,12 +460,12 @@ distances between genes using the Tfidf-distance, based on GO-Terms
 (Gene-Ontology-terms). For this a matrix <span class="math inline">\(A\)</span> of <span class="math inline">\(n\)</span> genes as rows and <span class="math inline">\(m\)</span> GO-Terms as columns is used, where
 genes can be interpreted as documents and GO-terms as terms [Thrun,
 2022].</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Hearingloss_N109)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>V <span class="ot">=</span> <span class="fu">Tfidf_dist</span>(Hearingloss_N109<span class="sc">$</span>FeatureMatrix_Gene2Term, <span class="at">tf_fun =</span> mean)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get distances</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>dist <span class="ot">=</span> V<span class="sc">$</span>dist</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Get weights</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>TfidfWeights <span class="ot">=</span> V<span class="sc">$</span>TfidfWeights</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">data</span>(Hearingloss_N109)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>V <span class="ot">=</span> <span class="fu">Tfidf_dist</span>(Hearingloss_N109<span class="sc">$</span>FeatureMatrix_Gene2Term, <span class="at">tf_fun =</span> mean)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># Get distances</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>dist <span class="ot">=</span> V<span class="sc">$</span>dist</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co"># Get weights</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>TfidfWeights <span class="ot">=</span> V<span class="sc">$</span>TfidfWeights</span></code></pre></div>
 <p>For the calculation of the (augmented) term-frequency, per default
 the mean of the non-zero entries is used, but can be specified with the
 argument tf_fun.</p>

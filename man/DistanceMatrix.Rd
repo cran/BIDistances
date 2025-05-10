@@ -3,26 +3,24 @@
 \alias{pdist}
 \title{Pairwise distance between pairs of objects}
 \description{
-computes the distance between objects in the data matrix, X, using the method
-specified by method
+computes the distance between objects in the data matrix, X, using the method specified by method
 }
 \usage{
-DistanceMatrix(X,method='euclidean',dim=2,outputisvector=FALSE,GPU=FALSE)
+DistanceMatrix(X,method='euclidean',dim=2,outputisvector=FALSE)
 }
 \arguments{
   \item{X}{data matrix [1:n,1:d], n cases d variables}
   \item{method}{Optional, method specified by distance string:
-                'euclidean','sqEuclidean','binary','cityblock',
-								'maximum','canberra','cosine','chebychev','jaccard',
-								'mahalanobis','minkowski','manhattan','braycur','cosine'
+                'binary','canberra','cityblock','euclidean,
+                'sqEuclidean',
+								'maximum','cosine','chebychev','jaccard,'kendallM','kendallD'
+								'mahalanobis','minkowski','manhattan','braycur','cosine','wasserstein','pearsonD','spearmanD','pearsonM','spearmanM'
 	}
-  \item{dim}{Optional: Dimension of X. If method="minkowski", choose p}
+  \item{dim}{Optional: if method="minkowski", or wasserstein, choose scalar. For minkowski the ppth root of the sum of the ppth powers of the differences of the components. For wasserstein the order, default should be then 1}
   \item{outputisvector}{Optional: should the output be converted to a vector}
-  \item{GPU}{
-  (Optional) Boolean, enables GPU computing (TRUE) or CPU (FALSE).
-  }
 }
 \details{
+If possible uses implementation parallelized by the parallelDist package. Otherwise R implementations besides Euclidean for which a GPU implementation is provided.
 
 'binary'
 (aka asymmetric binary): The vectors are regarded as binary bits,
@@ -51,8 +49,7 @@ also called: binary, asymmetric binary, etc.
  the squared generalized Mahalanobis distance between all pairs of
  rows in a data frame with respect to a covariance matrix.
  The element of the i-th row and j-th column of the distance matrix is defined as
-D_{ij}^2 = (\bold{x}_i - \bold{x}_j)' \bold{S}^{-1} (\bold{x}_i - \bold{x}_j)
-
+\eqn{D_{ij}^2 = (\bold{x}_i - \bold{x}_j)' \bold{S}^{-1} (\bold{x}_i - \bold{x}_j)}
 
 'minkowski':The p norm, the pth root of the sum of the pth powers
  of the differences of the components.
@@ -70,8 +67,24 @@ avoid negative distances.
 
 'braycur'=sum abs(x -y)/abs(x+y)
 
-'pearson'
-1 - r if r>1 and 1 otherwise. r is Pearson's correlation coefficient.
+'pearsonM' metric, see [Legendre, 1986] or [Bock,1974, pp.77-79]
+sqrt((1 - r)+1)/2) with r beeing the Pearson's correlation coefficient.
+
+'spearmanM' metric, see [Legendre, 1986] or [Bock,1974, pp.77-79]
+sqrt((1 - r)+1)/2)  with r beeing Spearman's correlation coefficient.
+
+'kendallM' metric, see [Legendre, 1986] or [Bock,1974, pp.77-79]
+sqrt((1 - r)+1)/2) with tau beeing Kendalls's correlation coefficient.
+
+'pearsonD' dissimilarity
+1 - r with r beeing the Pearson's correlation coefficient.
+
+'spearmanD' dissimilarity
+1 - r with r beeing Spearman's correlation coefficient.
+
+'kendallD' dissimilarity
+1 - r with tau beeing Kendalls's correlation coefficient.
+
 
 'cosine'
 s. wiki for similarity conversion: max(S)-S(i,j)
